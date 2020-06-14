@@ -1,0 +1,21 @@
+table {
+    border: 2px solid brown;
+  }
+  .center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
+  .transparent-input{
+    background-color:transparent !important;
+    border:none !important;
+ }
+ .btn {
+     background-color: yellow;
+ }
+ .ng-dirty {
+     .btn {
+        background-color: green;
+     }
+ }

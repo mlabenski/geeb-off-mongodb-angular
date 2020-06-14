@@ -1,0 +1,28 @@
+<div class="container">
+    <div *ngIf="match">
+          <div *ngFor="let user of match.users">
+              <div class="container" *ngIf="match.currentUser == user.streamName">
+                <div class="row" style="text-align: center;">
+                    <h3>
+                        Match is on round <a style="color: red">{{match.roundNumber}}</a>.
+                    </h3>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <app-twitch-video [channelSelected]="match.currentUser"></app-twitch-video>
+                    </div>
+                </div>
+                <div class="row">
+                    <h3>
+                        CURRENT GEEBER: <a style="color: red; text-decoration: underline;">{{user.streamName}}</a>
+                        has taken <a style="color: red; text-decoration: underline;">{{user.totalGeebs}}</a> GB's 
+                        and is level <a style="color: red; text-decoration: underline;">{{user.level}}</a>
+                    </h3>
+                </div>
+                <div class="row" >
+                        <button type="button" class="btn btn-success">Geeb Completed?</button>
+                        <button type="button" class="btn btn-danger">Vote Kick?</button>
+                </div>
+              </div>
+      </div>
+</div>

@@ -1,0 +1,32 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=Bowlby+One+SC');
+
+h1 {
+    font-family: 'Bowlby One SC', cursive;
+}
+h2 {
+    font-family: 'Bowlby One SC', cursive;
+}
+h3 {
+    font-family: 'Bowlby One SC', cursive;
+}
+h4 {
+    font-family: 'Bowlby One SC', cursive;
+}
+p {
+    font-family: 'Bowlby One SC', cursive;
+}
+tr {
+    font-family: 'Bowlby One SC', cursive;
+}
+
+html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+.background {
+    background-color: #94c997;
+    background-image: linear-gradient(315deg,#daacec 0%, #94c997 74%);
+}

@@ -1,0 +1,15 @@
+<div style="width: 400px; margin: auto;">
+    <h1>Geeboff Match View</h1>
+    <button type="button" (click)="getAllMatches()">Get all matches</button>
+
+    <hr>
+    <table *ngFor="let match of matches;">
+        <td>{{match.matchID}}</td>
+        <td>{{match.roundNumber}}</td>
+        <td>{{match.currentUser}}</td>
+        <td>
+            <button (click)="goToGameRoom($event, match.matchID)">View Match</button>
+        </td>
+    </table>
+    
+</div>
