@@ -55,7 +55,7 @@ export class LobbyComponent implements OnInit {
     var formData: any = new FormData();
     formData.append("channelName", this.form.get('channelName').value);
     formData.append("queued", true);
-    this.httpService.post('http://localhost:3000/create-user', formData).subscribe(
+    this.httpService.post('https://us-central1-geeb-off-functions.cloudfunctions.net/functions/request', this.form.get('channelName').value).subscribe(
       (response) => console.log(response),
       (error) => console.log(error)
     )

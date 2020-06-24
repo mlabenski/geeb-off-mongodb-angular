@@ -9,7 +9,7 @@ const routes: Routes = [
   {path: 'queue', component: LobbyComponent}, 
   {path : 'game-lobby', component: GameLobbyComponent},
   {path : 'game-room/:id', component: GameRoomComponent},
-  {path: '', redirectTo: '/queue', pathMatch: 'full'},
+  {path: '', component: LobbyComponent}
   ];
 
 

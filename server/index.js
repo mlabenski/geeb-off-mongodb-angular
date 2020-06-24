@@ -1,6 +1,7 @@
 // server.js
 
 const express = require("express");
+const cors = require('cors');
 const app = express();
 // Our users which will be queried by their index
 const users= [
@@ -39,11 +40,14 @@ const matches = [
   ];
   
   // Allow cross-origin requests
-  app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-  });
+  app.use(cors({origin: true}));
+
+  app.get('/:userId', (req, res) => res.send(Widgets.getById(req.params.id)));
+  app.get('/', (req, res) => res.send(Widgets.create()));
+
+  app.put('/:userid', (req, res) => res.send(Widgets.update(req.params.id, req.body)));
+  app.get('/', (req, res) => res.send(Widgets.list()));
+
   
   app.get("/matches", (req, res) => {
     return res.json(matches);

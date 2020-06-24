@@ -5,13 +5,14 @@
 export const environment = {
   production: false,
   firebaseConfig : {
-    apiKey: "AIzaSyCkeJBoBECsANNITIDzyAYXgd3hLER2Db0",
-    authDomain: "twitch-geeboff.firebaseapp.com",
-    databaseURL: "https://twitch-geeboff.firebaseio.com",
-    projectId: "twitch-geeboff",
-    storageBucket: "twitch-geeboff.appspot.com",
-    messagingSenderId: "554698535534",
-    appId: "1:554698535534:web:24b32a1022ca259143ac7f"
+    apiKey: "AIzaSyBi2QO7VDArDuwV7F0t_RzHTSvvgenPYJU",
+    authDomain: "geeb-off-functions.firebaseapp.com",
+    databaseURL: "https://geeb-off-functions.firebaseio.com",
+    projectId: "geeb-off-functions",
+    storageBucket: "geeb-off-functions.appspot.com",
+    messagingSenderId: "3979637654",
+    appId: "1:3979637654:web:c44699eac00cb4707a63b7"
+
 }
 }
 

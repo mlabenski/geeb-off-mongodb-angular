@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AngularFireModule } from "@angular/fire";
-import { AngularFirestoreModule } from "@angular/fire/firestore";
+import { AngularFireFunctionsModule, REGION } from "@angular/fire/functions";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { fromEventPattern } from 'rxjs';
 import { CountdownModule } from 'ngx-countdown';
@@ -32,13 +32,13 @@ import { GameLobbyComponent } from './game-lobby/game-lobby.component';
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule,
     CountdownModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    AngularFireFunctionsModule
   ],
-  providers: [UsersService, FormsModule, MatchService],
+  providers: [UsersService, FormsModule, MatchService, { provide: REGION, useValue: 'us-central1'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

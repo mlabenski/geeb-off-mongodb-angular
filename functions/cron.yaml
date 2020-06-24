@@ -1,0 +1,8 @@
+cron:
+-description: 'send queue to the match'
+url: /users/
+schedule: every 30 minutes synchronized
+-description: 'delete all the queued people'
+url: /users/
+schedule: every 30 minutes synchronized
+
