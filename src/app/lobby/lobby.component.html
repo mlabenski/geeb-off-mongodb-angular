@@ -25,14 +25,8 @@
   
       <div class="col-3 hidden-sm">
           <div class="container">
-            <form class="formGroup" [formGroup]="form" (ngSubmit)="onSubmit()">
-                <div class="form-group input-group-lg">
-                    <input class="form-control" style="color: black; font-weight: bold; font-size: large;" type="text" name='channelName' placeholder="Enter channel name..."  required class="formControl transparent-input" formControlName="channelName">
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-danger btn-block btn-lg">Register</button>
-                </div>
-            </form>
+            <input [(ngModel)]="submittedUsername" style="color: black; font-weight: bold; font-size: large;" type="text"  placeholder="Enter channel name...">
+            <button class="btn btn-danger btn-block btn-lg" (click)="callCloudFunction()">Register</button>
           </div>
       </div>
     </div>

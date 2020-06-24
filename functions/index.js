@@ -1,6 +1,5 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
@@ -11,27 +10,36 @@ const admin = require('firebase-admin');
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
+const usersCollection = db.collection("queue");
 
-
-exports.request = functions.https.onRequest(async (request, response) => {
-    const user = request.query.text;
-    
-    var date = new Date();
-    function getNum(time) {
-        if (time > 30) {
-            return 0;
-        }
-        else {
-            return 30;
-        }
+exports.request = functions.https.onCall(async (request, response) => {
+    response.set('Access-Control-Allow-Origin', '*');
+    response.set('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS');
+    response.set('Access-Control-Allow-Headers', '*');   
+    if (request.method === 'OPTIONS') {
+        response.end();
     }
-    const writeResult = await admin.firestore().collection('queue').add({user: user, time: getNum(date.getMinutes()), started: false})
-    .then(snapshot => {
-        response.status(200).send({status: 200, message: `Thank you for joining the stream ${user}`});
-    });
-    response.json({result:`Streamer with ID: ${writeResult.user} added to the queue.`});
-
+    else {
+        const user = request.query.text;
+        const writeResult = await admin.firestore().collection('queue').add({user: user})
+        .then(snapshot => {
+            response.status(200).send({status: 200, message: `Thank you for joining the stream ${user}`});
+        });
+        response.json({result: `Streamer with the ID; ${writeResult.user} added to the queue.`});
+    }
 });
+
+exports.myUppercaseFunction = functions.https.onCall(async (data, context) => {
+    console.log(data.coolMsg);
+    const user = data.coolMsg;
+    const writeResult = await admin.firestore().collection('queue').add({user: user})
+    .then(snapshot => {
+        return response.status(200).json({
+            message: 'Email sent succesfully.'
+        })
+    });
+  });
+
 
 //Executes when the cloud firestore is written to, its going to add the time stamp 
 exports.assignMatchTime = functions.firestore.document('/queue/{userId}')

@@ -7,6 +7,9 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { CountdownComponent } from '../countdown/countdown.component';
 import { Router } from '@angular/router';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { AngularFireFunctions } from '@angular/fire/functions';
+import { ToastrService } from 'ngx-toastr';
+import { resolve } from 'path';
 @Component({
   selector: 'app-lobby',
   templateUrl: './lobby.component.html',
@@ -20,9 +23,11 @@ export class LobbyComponent implements OnInit {
   currentGeeber: any;
   @Input() startBoolean: boolean;
   form: FormGroup;
+  submittedUsername = '';
 
 
-  constructor(private usersService:UsersService, private formBuilder: FormBuilder, private router: Router, private httpService: HttpClient) {
+  constructor(private usersService:UsersService, private formBuilder: FormBuilder, private router: Router, private httpService: HttpClient
+    , private functions: AngularFireFunctions, private toastr: ToastrService) {
     
     this.form = this.formBuilder.group({
       channelName: [''],
@@ -49,18 +54,13 @@ export class LobbyComponent implements OnInit {
       .getQueuedPlayers()
       .subscribe(res => (this.users = res));
 
- 
-
-  onSubmit() {
-    var formData: any = new FormData();
-    formData.append("channelName", this.form.get('channelName').value);
-    formData.append("queued", true);
-    this.httpService.post('https://us-central1-geeb-off-functions.cloudfunctions.net/functions/request', this.form.get('channelName').value).subscribe(
-      (response) => console.log(response),
-      (error) => console.log(error)
-    )
-  }
   onClick() {
     this.router.navigate(['/game-lobby']);
+  }
+  callCloudFunction() {
+    const callable = this.functions.httpsCallable('myUppercaseFunction');
+    callable({coolMsg: this.submittedUsername}).subscribe(async result => {
+      console.log(result.data);
+    })
   }
 }

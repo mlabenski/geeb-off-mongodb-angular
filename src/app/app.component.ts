@@ -5,6 +5,7 @@ import { switchMap } from 'rxjs/operators';
 import { UsersService } from "./shared/users.service";
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AngularFireDatabase } from "@angular/fire/database";
+import { ToastrService } from 'ngx-toastr';
 
 import * as firebase from 'firebase';
 @Component({
@@ -23,7 +24,7 @@ export class AppComponent {
   signupForm: FormGroup;
   data$: any;
 
-  constructor(private usersService:UsersService, private formBuilder: FormBuilder, private af: AngularFireDatabase) {
+  constructor(private usersService:UsersService, private formBuilder: FormBuilder, private af: AngularFireDatabase, private toastr: ToastrService) {
     this.channelSelected = "RuptureXX";
   }
   private initForm(){
@@ -70,5 +71,6 @@ export class AppComponent {
 
     this.af.database.ref('queue').push(formRequest);
     this.signupForm.reset();
+    this.toastr.success('Hello world!', 'Toastr fun!');
   }
 }

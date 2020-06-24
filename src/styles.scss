@@ -1,5 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css?family=Bowlby+One+SC');
+// bootstrap style toast 
+// or import a bootstrap 4 alert styled design (SASS ONLY) 
+// should be after your bootstrap imports, it uses bs4 variables, mixins, functions 
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import '../node_modules/ngx-toastr/toastr-bs4-alert';
+
 
 h1 {
     font-family: 'Bowlby One SC', cursive;
