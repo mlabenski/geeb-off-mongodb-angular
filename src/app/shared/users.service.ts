@@ -9,7 +9,10 @@ export class UsersService {
   constructor(private firestore: AngularFirestore) {
    }
    getUsers() {
-    return this.firestore.collection("Queue").snapshotChanges();
+    return this.firestore.collection("queue").snapshotChanges();
+  }
+  getMatchedUsers() {
+    return this.firestore.collection("match").snapshotChanges();
   }
   getUnmatchedPlayers() {
     return this.firestore.collection("Queue", ref => ref.where('queued', '==', 'false'))

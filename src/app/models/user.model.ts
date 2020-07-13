@@ -1,8 +1,9 @@
 import { Deserializable } from '../shared/deserializeable.model';
 
 export class User implements Deserializable{
-    streamName:string;
-    inQueue:boolean;
+    started: boolean;
+    timeJoined:number;
+    user: string;
 
     deserialize(input: any): this {
         return Object.assign(this, input);

@@ -9,7 +9,8 @@ import { Router } from '@angular/router';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { ToastrService } from 'ngx-toastr';
-import { resolve } from 'path';
+import { NotificationService } from '../notification.service'
+
 @Component({
   selector: 'app-lobby',
   templateUrl: './lobby.component.html',
@@ -24,10 +25,12 @@ export class LobbyComponent implements OnInit {
   @Input() startBoolean: boolean;
   form: FormGroup;
   submittedUsername = '';
+  queuedUsers: any;
+  matchedUsers: any;
 
 
   constructor(private usersService:UsersService, private formBuilder: FormBuilder, private router: Router, private httpService: HttpClient
-    , private functions: AngularFireFunctions, private toastr: ToastrService) {
+    , private functions: AngularFireFunctions, private notifyService : NotificationService) {
     
     this.form = this.formBuilder.group({
       channelName: [''],
@@ -36,8 +39,11 @@ export class LobbyComponent implements OnInit {
   }
   ngOnInit() {
     this.getUsers();
+    this.getMatchedUsers();
+    console.log(this.queuedUsers);
+    console.log(this.matchedUsers);
   }
-  users;
+
 
   changeChannel(username) {
     this.channelSelected = username;
@@ -47,20 +53,30 @@ export class LobbyComponent implements OnInit {
   getUsers= () =>
     this.usersService
       .getUsers()
-      .subscribe(res => (this.users = res));
+      .subscribe(res => { this.queuedUsers= res; console.log(this.queuedUsers)});
 
-  getQueuedUsers= () =>
+  getMatchedUsers= () =>
     this.usersService
-      .getQueuedPlayers()
-      .subscribe(res => (this.users = res));
+      .getMatchedUsers()
+      .subscribe(res => { this.matchedUsers= res; console.log(this.queuedUsers)});
 
   onClick() {
     this.router.navigate(['/game-lobby']);
   }
+
   callCloudFunction() {
-    const callable = this.functions.httpsCallable('myUppercaseFunction');
-    callable({coolMsg: this.submittedUsername}).subscribe(async result => {
-      console.log(result.data);
+    var addUser = this.functions.httpsCallable('request');
+    addUser({user: this.submittedUsername}).toPromise()
+    .then((res) =>{
+      const alert = this.notifyService.showSuccess(res.user, "User added:");
     })
-  }
+    .catch(err => {
+      console.log(err);
+    })
+    //obs.subscribe({next(res) { console.log('got value' + res)}, error(err) { console.error('Something wrong occured')}, complete() { console.log('done')}});
+    }
 }
+
+//obs.subscribe(async res => {
+  //const alert = await this.notifyService.showSuccess(res.msg, "big message");
+//});

@@ -8,10 +8,17 @@
             <tr>
               <td>Queued Players: </td>
             </tr>
+            <tr>
+              <td>Matched Players: </td>
+            </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let user of users">
-              <td>{{user.payload.doc.data().channelName}}</td>
+
+            <tr *ngFor="let user of queuedUsers">
+              <td>{{user.payload.doc.data().user}}</td>
+            </tr>
+            <tr *ngFor="let user of matchedUsers">
+              <td>{{user.payload.doc.data().user}}</td>
             </tr>
           </tbody>
         </table>

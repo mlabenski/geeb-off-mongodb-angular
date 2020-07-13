@@ -51,7 +51,6 @@ export class CountdownComponent implements OnInit {
     if (this.displaySeconds < 10) {
       this.displaySeconds = "0"+ this.displaySeconds;
     }
-    console.log(this.displayMinutes , this.displaySeconds);
   }
 }
 

@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const cors = require('cors')({origin: true});
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
@@ -12,50 +13,34 @@ admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
 const usersCollection = db.collection("queue");
 
-exports.request = functions.https.onCall(async (request, response) => {
-    response.set('Access-Control-Allow-Origin', '*');
-    response.set('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS');
-    response.set('Access-Control-Allow-Headers', '*');   
-    if (request.method === 'OPTIONS') {
-        response.end();
+
+function time(minutes) {
+    if (minutes>29) {
+        return 0;
     }
     else {
-        const user = request.query.text;
-        const writeResult = await admin.firestore().collection('queue').add({user: user})
-        .then(snapshot => {
-            response.status(200).send({status: 200, message: `Thank you for joining the stream ${user}`});
-        });
-        response.json({result: `Streamer with the ID; ${writeResult.user} added to the queue.`});
+        return 30;
     }
+}
+
+exports.request = functions.https.onCall(async (data, context) => {
+    const user = data.user;
+    var date = new Date();
+    var dateJoined = time(date.getMinutes());
+    if(!(typeof user === 'string') || user.length === 0) {
+        throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+        'one arguments "text" containing the message text to add.');
+    }
+    return await admin.firestore().collection('queue').add({
+        user: user,
+        timeJoined: dateJoined,
+        round: 0
+    }).then(() => {
+        console.log('User added to the queue');
+        return {user: user, timeJoined: dateJoined, round: 0};
+    });
 });
 
-exports.myUppercaseFunction = functions.https.onCall(async (data, context) => {
-    console.log(data.coolMsg);
-    const user = data.coolMsg;
-    const writeResult = await admin.firestore().collection('queue').add({user: user})
-    .then(snapshot => {
-        return response.status(200).json({
-            message: 'Email sent succesfully.'
-        })
-    });
-  });
-
-
-//Executes when the cloud firestore is written to, its going to add the time stamp 
-exports.assignMatchTime = functions.firestore.document('/queue/{userId}')
-    .onCreate((snap, context) => {
-        const userId = context.params.userId;
-        const user = snap.after.data();
-
-
-        //I can access the parameter {userId} with 'context.params'
-        console.log('Adding the time variable to ', context.params.user, user);
-
-        var date = user.toUpperCase();
-
-        return snap.ref.parent.child(userId).set(date);
-
-    });
 
 
 
@@ -64,11 +49,12 @@ exports.scheduledMatchUpdateV2 = functions.pubsub.schedule('*/5 * * * *').onRun(
     var date = new Date();
     //once we figure this out, we can compare the invididuals join date to hte server time to decide if their in the queue.
     timeNow = date.getMinutes();
-    const batch = db.batch();
+    let batch = db.batch();
+    let queueBatch = db.batch();
     let currentQueue = db.collection('queue');
     currentQueue.get().then(function(querySnapshot) {
         if (!querySnapshot.empty){
-            querySnapshot.forEach(function(doc) {
+            querySnapshot.forEach(doc => {
                 let docData = doc.data();
                 if (docData.time == 30 || docData.time == 0);
                 {
@@ -77,14 +63,35 @@ exports.scheduledMatchUpdateV2 = functions.pubsub.schedule('*/5 * * * *').onRun(
                 console.log(doc.id, ' => ', doc.data());
                 const matchLobby = db.doc(`match/${docData.user}`);
                 batch.set(matchLobby, doc.data());
-                // Could we add more parameters here, or should we wait.. also how do we 
-                // make a new collection
-                //batch.delete(doc.data());
+                db.collection('queue').doc(doc.id).delete();
         });
         return batch.commit();
         }
     })
     .catch(err => {
         return Promise.reject(err);
+    })
+});
+
+exports.changePlayer = functions.pubsub.schedule('*/1 * * * *').onRun(async (context) => {
+    const db = admin.firestore();
+    let lobbyDB = db.collection('match');
+    let currentPlayerDB = db.collection('currentPlayer');
+    let batch = db.batch();
+    lobbyDB.get().then(function(querySnapshot) {
+        querySnapshot.forEach(doc => {
+            let docData = doc.data();
+            if (docData.round == 0){
+                //console.log(`found a ${docData.user} user that is now up! `)
+                const currentPlayer = db.doc(`currentPlayer/${docData.user}`);
+                batch.set(currentPlayer, doc.data());
+                return batch.commit().then(function() {
+                    console.log("added a new player");
+                    return null;
+                });
+                //return db.collection('match').doc(doc.id).update({round: 2});
+                //return batch.commit();
+            }
+        })
     })
 });

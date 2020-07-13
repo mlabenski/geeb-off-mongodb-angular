@@ -1,3 +1,4 @@
+
 import { User } from './user.model';
 import { Deserializable } from '../shared/deserializeable.model';
 
