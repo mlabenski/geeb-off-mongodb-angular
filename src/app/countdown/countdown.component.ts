@@ -34,17 +34,22 @@ export class CountdownComponent implements OnInit {
   ngOnInit(): void {
   }
   theTimeIs() {
+    // The 11:30.01 + timer...
     if (this.minutes > 30) {
       if (this.minutes > 50 || this.minutes < 60){
         this.displaySeconds = "0"+(60-this.minutes);
       } 
-      this.displayMinutes = (60-this.minutes);
+      this.displayMinutes = (59-this.minutes);
     }
+    // The 11:00-11:30 timer
     if(this.minutes < 30) {
-      if (this.minutes > 20 || this.minutes < 30){
-        this.displaySeconds = "0"+(30-this.minutes);
+      if(this.minutes >= 29){
+        this.displayMinutes = "00"
+      }
+      if (this.minutes > 20){
+        this.displayMinutes = "0"+(29-this.minutes);
       } 
-      this.displayMinutes = (30-this.minutes);
+      this.displayMinutes = (29-this.minutes);
     }
 
     this.displaySeconds = (60-this.seconds);

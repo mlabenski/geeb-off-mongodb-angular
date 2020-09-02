@@ -1,28 +1,42 @@
-<div class="container">
-    <div *ngIf="match">
-          <div *ngFor="let user of match.users">
-              <div class="container" *ngIf="match.currentUser == user.streamName">
-                <div class="row" style="text-align: center;">
-                    <h3>
-                        Match is on round <a style="color: red">{{match.roundNumber}}</a>.
-                    </h3>
-                </div>
-                <div class="row">
-                    <div class="col-sm">
-                        <app-twitch-video [channelSelected]="match.currentUser"></app-twitch-video>
+<div class="container-fluid">
+                <div class="row" style="text-align: center;" >
+                    <div *ngIf="(users$ | async);">
+                        <div class="col-4" *ngFor="let user of users$ | async">
+                            <h3 style="color: #daacec">{{user.user}}</h3>
+                            <h3 style="color: grey">Round: {{user.round}}</h3>
+                            <div class="row fluid">
+                                <div class="col span5" >
+                                    <app-favicon-animation [vote]=VoteCounter (voteChanged)="voteChangedHandler($event)"></app-favicon-animation>
+                                </div>
+                                <div class="col span5">
+                                    <app-favicon-animation></app-favicon-animation>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="(currentUser$ | async) as user; else loading;">
+                        <div class="col-6">
+                            <div *ngFor="let user of currentUser$ | async">
+                              <h2>{{user.user}}</h2>
+                              <app-twitch-video [currentTurnName]="user.user" ></app-twitch-video>
+                                <div 
+                                style="width:1080px;height:50px;" id="user.user"
+                                [ngStyle]="{'background':'linear-gradient(to right, '+progressColor+' '+progress+'%, '+remainingProgressColor+' '+progress+'%'}">
+                                </div>
+                            </div>
+                        </div>
+    
+                        </div>
+        
+                    <ng-template #loading>
+                        <div class="col-2">
+                            <h2>Loading stuff...</h2>
+                        </div>
+                    </ng-template>
+
+                    <div class="col-3">
+                        2 of 3 (wider)
                     </div>
                 </div>
-                <div class="row">
-                    <h3>
-                        CURRENT GEEBER: <a style="color: red; text-decoration: underline;">{{user.streamName}}</a>
-                        has taken <a style="color: red; text-decoration: underline;">{{user.totalGeebs}}</a> GB's 
-                        and is level <a style="color: red; text-decoration: underline;">{{user.level}}</a>
-                    </h3>
-                </div>
-                <div class="row" >
-                        <button type="button" class="btn btn-success">Geeb Completed?</button>
-                        <button type="button" class="btn btn-danger">Vote Kick?</button>
-                </div>
-              </div>
-      </div>
 </div>
+

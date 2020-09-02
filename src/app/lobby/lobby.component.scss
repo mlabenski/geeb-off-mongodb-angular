@@ -1,0 +1,23 @@
+.purple {
+    background-color: #daacec;
+    color: white;
+}
+.green {
+    background-color: #82D173;
+    color: white;
+}
+.lightgreen {
+    background-color: hsl(110, 51%, 64%, 0.4);
+
+}
+@media screen and (max-width: 890px) {
+    .text {
+        font-size:30px;
+    }
+}
+ 
+@media screen and (max-width: 568px) {
+    .text {
+        font-size:3em;
+    }
+}

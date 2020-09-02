@@ -1,44 +1,51 @@
-<div class="container">
-  
+<div class="container fluid">
+  <div class="row">
+    <div class="col-12">
+      <app-countdown></app-countdown>
+    </div>
+  </div>
     <!-- Control the column width, and how they should appear on different devices -->
     <div class="row">
-      <div class="col-3  hidden-sm">
-        <table class="table table-borderless">
-          <thead class="thead-dark">
+      <div class="col-3  hidden-sm" (mouseenter)="inputDisplay= true" (mouseleave)="inputDisplay = false">
+        <button class="btn purple btn-block btn-md text" (click)="callCloudFunction()"><h4 *ngIf="!usernameSubmissionChange">Play Next</h4></button>
+        <input [(ngModel)]="submittedUsername" *ngIf="inputDisplay" style="color: black; font-weight: bold; font-size: large" type="text" placeholder="Twitch Username">
+        <table class="table table-borderless" style="margin-top: 25%; text-align: center;">
+          <thead class="thead-dark  green">
             <tr>
-              <td>Queued Players: </td>
-            </tr>
-            <tr>
-              <td>Matched Players: </td>
+              <td >Queued Players:</td>
             </tr>
           </thead>
-          <tbody>
+          <tbody  class="lightgreen">
 
             <tr *ngFor="let user of queuedUsers">
               <td>{{user.payload.doc.data().user}}</td>
             </tr>
-            <tr *ngFor="let user of matchedUsers">
+          </tbody>
+        </table>
+  
+      </div>
+
+  
+      <div class="col-6">
+        <h1 style="text-align: center;">until next game... </h1>
+        <img src="../assets/gravityBong.png" class="img-fluid center" alt="Responsive image" style="margin-left: 30px;">
+      </div>
+  
+      <div class="col-3  hidden-sm">
+        <button class="btn purple btn-block btn-md text" (click)="onGameRoomClick()"><h4>Spectate Match</h4></button>
+        <table class="table table-borderless" style="margin-top: 25%; text-align: center;">
+          <thead class="thead-dark  green">
+            <tr>
+              <td>Currently Playing: </td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="lightgreen" *ngFor="let user of matchedUsers">
               <td>{{user.payload.doc.data().user}}</td>
             </tr>
           </tbody>
         </table>
       </div>
-  
-      <div class="col-6">
-        <app-countdown></app-countdown>
-        <h1 style="text-align: center;">until next game... </h1>
-        <img src="../assets/gravityBong.png" class="img-fluid center" alt="Responsive image" style="margin-left: 30px;">
-      </div>
-  
-      <div class="col-3 hidden-sm">
-          <div class="container">
-            <input [(ngModel)]="submittedUsername" style="color: black; font-weight: bold; font-size: large;" type="text"  placeholder="Enter channel name...">
-            <button class="btn btn-danger btn-block btn-lg" (click)="callCloudFunction()">Register</button>
-          </div>
-      </div>
     </div>
-    <div class="row">
-        <button type="button" class="btn btn-sm btn-secondary" style="display: inline;">Learn More</button>
-        <button type="button" class="btn btn-sm btn-secondary" style="display: inline;" (click)="onClick()">View All Matches</button>
-    </div>
+
 </div>

@@ -10,6 +10,7 @@ import { CountdownModule } from 'ngx-countdown';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from "src/environments/environment";
 
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UsersService } from './shared/users.service';
@@ -18,7 +19,8 @@ import { CountdownComponent } from './countdown/countdown.component';
 import { GameRoomComponent } from './game-room/game-room.component';
 import { LobbyComponent } from './lobby/lobby.component';
 import { GameLobbyComponent } from './game-lobby/game-lobby.component';
-import { MatchService } from './shared/match.service';
+import { FaviconAnimationComponent } from './favicon-animation/favicon-animation.component';
+import { FontAwesomeModule, FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { MatchService } from './shared/match.service';
     CountdownComponent,
     GameRoomComponent,
     LobbyComponent,
-    GameLobbyComponent
+    GameLobbyComponent,
+    FaviconAnimationComponent,
+
 
   ],
   imports: [
@@ -40,9 +44,10 @@ import { MatchService } from './shared/match.service';
     HttpClientModule,
     AngularFireFunctionsModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    FontAwesomeModule
   ],
-  providers: [UsersService, FormsModule, MatchService, { provide: REGION, useValue: 'us-central1'}],
+  providers: [UsersService, FormsModule, { provide: REGION, useValue: 'us-central1'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

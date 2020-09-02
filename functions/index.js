@@ -34,17 +34,20 @@ exports.request = functions.https.onCall(async (data, context) => {
     return await admin.firestore().collection('queue').add({
         user: user,
         timeJoined: dateJoined,
-        round: 0
+        round: 0,
+        failed: false,
+        currentTime: [0,0],
+        votes: 0
     }).then(() => {
         console.log('User added to the queue');
-        return {user: user, timeJoined: dateJoined, round: 0};
+        return {user: user, timeJoined: dateJoined, round: 0, failed: false, currentTime: [0,0], votes: 0};
     });
 });
 
 
 
 
-exports.scheduledMatchUpdateV2 = functions.pubsub.schedule('*/5 * * * *').onRun(async (context) => {
+exports.scheduledMatchUpdateV2 = functions.pubsub.schedule('*/10 * * * *').onRun(async (context) => {
     const db = admin.firestore();
     var date = new Date();
     //once we figure this out, we can compare the invididuals join date to hte server time to decide if their in the queue.
@@ -56,7 +59,7 @@ exports.scheduledMatchUpdateV2 = functions.pubsub.schedule('*/5 * * * *').onRun(
         if (!querySnapshot.empty){
             querySnapshot.forEach(doc => {
                 let docData = doc.data();
-                if (docData.time == 30 || docData.time == 0);
+                if (docData.timeJoined == 30 || docData.timeJoined == 0);
                 {
                  console.log("time equals correctly");
                 }
@@ -73,25 +76,62 @@ exports.scheduledMatchUpdateV2 = functions.pubsub.schedule('*/5 * * * *').onRun(
     })
 });
 
-exports.changePlayer = functions.pubsub.schedule('*/1 * * * *').onRun(async (context) => {
-    const db = admin.firestore();
-    let lobbyDB = db.collection('match');
-    let currentPlayerDB = db.collection('currentPlayer');
-    let batch = db.batch();
-    lobbyDB.get().then(function(querySnapshot) {
-        querySnapshot.forEach(doc => {
-            let docData = doc.data();
-            if (docData.round == 0){
-                //console.log(`found a ${docData.user} user that is now up! `)
-                const currentPlayer = db.doc(`currentPlayer/${docData.user}`);
-                batch.set(currentPlayer, doc.data());
-                return batch.commit().then(function() {
-                    console.log("added a new player");
-                    return null;
-                });
-                //return db.collection('match').doc(doc.id).update({round: 2});
-                //return batch.commit();
+
+exports.changePlayer = functions.pubsub.schedule('*/3 * * * *').onRun(async (context) => {
+        const db = admin.firestore();
+        let lobbyDB = db.collection('match');
+        let currentPlayerDB = db.collection('currentPlayerDB');
+        var roundNumbers = [];
+        // gather the round number of every one in the game to determine who goes next..
+        lobbyDB.get().then(function(querySnapshot) {
+            for (var i in querySnapshot.docs){
+                const doc = querySnapshot.docs[i];
+                let docData = doc.data();
+                roundNumbers.push(docData.round);
             }
-        })
-    })
+        }).then(
+        lobbyDB.get().then(function(querySnapshot) {
+            currentPlayerDB.get().then(function(querySnapshotDB) {
+                // delete the last geeber from the current player database.
+                for (var i in querySnapshotDB.docs) {
+                    if (i >= 0) {
+                        const doc = querySnapshotDB.docs[i];
+                        db.collection('currentPlayerDB').doc(doc.id).delete();
+                    }
+                }
+                // Find the next player to take a geeb, remove them if they lost in the previous round
+                for(var i in querySnapshot.docs) {
+                    var date = new Date();
+                        let batch = db.batch();
+                        const doc = querySnapshot.docs[i];
+                        let docData = doc.data();
+                        if (Math.min(...roundNumbers)== docData.round){
+                            // Once the viewers can vote on the player failing: then we will switch the logic to 
+                            // exlude the docDa
+                            if (docData.failed == true) {
+                                db.collection('match').doc(doc.id).delete();
+                                console.log(`${docData.user} has failed the round, removing from database`);
+                                return true;
+                            }
+                            // We entered the logic that enters the current geeber into the currentPlayerDB
+                            const currentPlayer = db.doc(`currentPlayerDB/${docData.user}`);
+                            batch.set(currentPlayer, doc.data());
+                            let nextRound = docData.round+1;
+                            let minutes = date.getMinutes();
+                            let seconds = date.getSeconds();
+                            var time = [];
+                            return batch.commit().then(function() {
+                                //once we figure this out, we can compare the invididuals join date to hte server time to decide if their in the queue.
+                                    console.log(`added a new player ${docData.user}`)
+                                    time.push(minutes);
+                                    time.push(seconds);
+                                    db.collection('match').doc(doc.id).update({round: nextRound});
+                                    db.collection('match').doc(doc.id).update({currentTime: time});
+                                    return true;
+                            })
+
+                    }
+                }
+            })
+        }));  
 });

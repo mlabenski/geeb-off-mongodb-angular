@@ -1,29 +1,27 @@
-import { Component, OnInit, ElementRef, ViewChild, Input, SimpleChanges } from '@angular/core';
-import { parseLazyRoute } from '@angular/compiler/src/aot/lazy_routes';
-
+import { Component, OnInit, Input} from '@angular/core';
 @Component({
   selector: 'app-twitch-video',
   templateUrl: './twitch-video.component.html',
   styleUrls: ['./twitch-video.component.scss']
 })
 export class TwitchVideoComponent implements OnInit {
-  constructor() { }
-  channels = ["rupturexx", "bob ross"]
-  player: any;
-  @Input() channelSelected: string;
+  constructor() { 
+  }
 
+  player: any;
+  @Input() currentTurnName: any;
+  previousTurnName: any;
   ngOnInit(): void {
-    var options = {
-      width: 1080,
-      height: 720,
-      channel: "rupturexx",
-    };
-    this.player = new Twitch.Player("<player div ID>", options)
-    this.player.setVolume(0.5);
+
+      var options = {
+        width: 1080,
+        height: 720,
+        channel: this.currentTurnName,
+      };
+      this.player = new Twitch.Player("<player div ID>", options)
+      this.player.setVolume(0.5);
+      this.player.setChannel(this.currentTurnName);
+      console.log(this.currentTurnName);
   }
-  ngOnChanges(changes: SimpleChanges) {
-    if(this.channelSelected != null){
-      this.player.setChannel(this.channelSelected);
-    }
-  }
+
 }

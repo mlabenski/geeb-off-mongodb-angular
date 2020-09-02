@@ -12,7 +12,6 @@ export const environment = {
     storageBucket: "geeb-off-functions.appspot.com",
     messagingSenderId: "3979637654",
     appId: "1:3979637654:web:c44699eac00cb4707a63b7"
-
 }
 }
 

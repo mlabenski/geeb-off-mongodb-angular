@@ -10,12 +10,14 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { ToastrService } from 'ngx-toastr';
 import { NotificationService } from '../notification.service'
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-lobby',
   templateUrl: './lobby.component.html',
-  styleUrls: ['./lobby.component.scss']
+  styleUrls: ['./lobby.component.scss'],
 })
+
 export class LobbyComponent implements OnInit {
   subscription: Subscription;
   username = 'RuptureXX'
@@ -27,10 +29,15 @@ export class LobbyComponent implements OnInit {
   submittedUsername = '';
   queuedUsers: any;
   matchedUsers: any;
+  users$: Observable<User[]>
+  show: boolean;
+  inputDisplay: boolean;
+  usernameSubmissionChange: any;
 
 
   constructor(private usersService:UsersService, private formBuilder: FormBuilder, private router: Router, private httpService: HttpClient
     , private functions: AngularFireFunctions, private notifyService : NotificationService) {
+      this.inputDisplay = false;
     
     this.form = this.formBuilder.group({
       channelName: [''],
@@ -42,6 +49,7 @@ export class LobbyComponent implements OnInit {
     this.getMatchedUsers();
     console.log(this.queuedUsers);
     console.log(this.matchedUsers);
+    this.show = false;
   }
 
 
@@ -58,11 +66,27 @@ export class LobbyComponent implements OnInit {
   getMatchedUsers= () =>
     this.usersService
       .getMatchedUsers()
-      .subscribe(res => { this.matchedUsers= res; console.log(this.queuedUsers)});
+      .subscribe(res => { this.matchedUsers= res; console.log(this.matchedUsers)});
 
-  onClick() {
-    this.router.navigate(['/game-lobby']);
+  onGameRoomClick() {
+    this.router.navigate(['/game-room']);
   }
+
+  onPopulateUsersClick() {
+    this.show = true;
+    this.users$ = this.usersService
+    .populateUserObject();
+
+    for(let user in this.users$) {
+      console.log(user);
+    }
+  }
+  checkDirty(value) {
+    if (value.dirty) {
+      this.usernameSubmissionChange = true;
+    }
+  }
+
 
   callCloudFunction() {
     var addUser = this.functions.httpsCallable('request');

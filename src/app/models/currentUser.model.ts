@@ -1,11 +1,11 @@
-export class User {
+export class CurrentUser {
     round: boolean;
     timeJoined:number;
     user: string;
     failed: boolean;
 
 
-    public User(user, timeJoined, round, failed) {
+    public CurrentUser(user, timeJoined, round, failed) {
         this.user = user;
         this.timeJoined = timeJoined;
         this.round = round;
