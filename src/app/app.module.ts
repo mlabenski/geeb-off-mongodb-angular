@@ -21,6 +21,8 @@ import { LobbyComponent } from './lobby/lobby.component';
 import { GameLobbyComponent } from './game-lobby/game-lobby.component';
 import { FaviconAnimationComponent } from './favicon-animation/favicon-animation.component';
 import { FontAwesomeModule, FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { TimerComponent } from './timer/timer.component';
+import { VoteBarComponent } from './vote-bar/vote-bar.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,8 @@ import { FontAwesomeModule, FaIconComponent } from '@fortawesome/angular-fontawe
     LobbyComponent,
     GameLobbyComponent,
     FaviconAnimationComponent,
+    TimerComponent,
+    VoteBarComponent,
 
 
   ],

@@ -15,7 +15,7 @@ export class TwitchVideoComponent implements OnInit {
 
       var options = {
         width: 1080,
-        height: 720,
+        height: 650,
         channel: this.currentTurnName,
       };
       this.player = new Twitch.Player("<player div ID>", options)

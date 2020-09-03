@@ -2,11 +2,13 @@ import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TwitchVideoComponent } from '../twitch-video/twitch-video.component';
 import { UsersService } from '../shared/users.service';
-import { Observable } from 'rxjs';
+import { Observable, fromEventPattern } from 'rxjs';
 import { User } from '../models/user.model';
 import { CurrentUser } from '../models/currentUser.model';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { tap } from 'rxjs/operators';
+import { TimerComponent } from '../timer/timer.component';
+import { VoteBarComponent } from '../vote-bar/vote-bar.component';
 @Component({
   selector: 'app-game-room',
   templateUrl: './game-room.component.html',
@@ -21,10 +23,7 @@ export class GameRoomComponent implements OnInit {
     tap(res => {
     this.currentTurnName = res
     this.currentTurnName = this.currentTurnName[0].user;
-    this.VoteCounter = res;
-    this.VoteCounter = this.VoteCounter[0].votes;
-    console.log(this.currentTurnName);
-    console.log(this.VoteCounter);
+    console.log(this.currentTurn);
     })
     ).subscribe();
   }
@@ -32,11 +31,16 @@ export class GameRoomComponent implements OnInit {
   items: any;
   currentTurnName : any;
   currentRoundNumber: any;
+  currentNumberOfVotes: any;
   previousTurn: any;
   progress = 30;
   VoteCounter: any;
+  totalVotes: any;
   progressColor = 'green'
   remainingProgressColor = 'red';
+  timer = 70;
+  timerColor = 'gray'
+  remainingTimerColor = 'white';
 
   ngOnInit() {
     this.onPopulateUsers();
@@ -47,14 +51,12 @@ ngOnChanges(changes: SimpleChanges) {
    this.currentRoundNumber++;
    }
  }
- voteChangedHandler(vote: number) {
-   if (this.VoteCounter > 0 ) {
-    this.VoteCounter = this.VoteCounter+vote;
-   }
-   else {
-     this.VoteCounter = 0 + vote;
-   }
-  console.log(this.VoteCounter);
+
+ voted = id => 
+    this.usersService.updateVotes(id);
+
+ failed(id) {
+   this.usersService.failedVotes(id);
  }
   onPopulateUsers() {
     this.users$ = this.usersService

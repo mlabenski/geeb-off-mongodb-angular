@@ -77,7 +77,7 @@ exports.scheduledMatchUpdateV2 = functions.pubsub.schedule('*/10 * * * *').onRun
 });
 
 
-exports.changePlayer = functions.pubsub.schedule('*/3 * * * *').onRun(async (context) => {
+exports.changePlayer = functions.pubsub.schedule('*/2 * * * *').onRun(async (context) => {
         const db = admin.firestore();
         let lobbyDB = db.collection('match');
         let currentPlayerDB = db.collection('currentPlayerDB');
@@ -96,6 +96,10 @@ exports.changePlayer = functions.pubsub.schedule('*/3 * * * *').onRun(async (con
                 for (var i in querySnapshotDB.docs) {
                     if (i >= 0) {
                         const doc = querySnapshotDB.docs[i];
+                        let docData = doc.data();
+                        if(docData.votes == -1) {
+                            db.collection('match').doc(doc.id).delete();
+                        }
                         db.collection('currentPlayerDB').doc(doc.id).delete();
                     }
                 }

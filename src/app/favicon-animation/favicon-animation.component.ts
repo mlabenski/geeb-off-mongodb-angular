@@ -45,17 +45,20 @@ export const pulseAnimation = animation([
   ]
 })
 export class FaviconAnimationComponent{
-  @Output() voteChanged: EventEmitter<number> = new EventEmitter();
+  @Output() voteChanged: EventEmitter<string> = new EventEmitter();
   thumbsDownClicked: EventEmitter<number> = new EventEmitter()
   clicked = false;
   thumbsUp = faThumbsUp
   thumbsDown = faThumbsDown
-  @Input() vote: number;
+  @Input() vote: string;
 
   increment() {
+    var i = 0;
     this.clicked = !this.clicked;
-    this.vote++;
-    this.voteChanged.emit(this.vote);
+    while (i == 0) {
+      this.voteChanged.emit(this.vote);
+      i = 1;
+    }
   }
   
 }
